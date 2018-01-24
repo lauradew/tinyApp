@@ -39,12 +39,14 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
+
+
 app.post("/urls/:id/delete", (req, res) => {
   let urlLine = req.params.id;
   //conosle.log to check id
   // console.log(req.params);
   delete urlDatabase[urlLine];
-  res.redirect("/urls")
+  res.redirect("/urls");
 });
 app.post("/urls", (req, res) => {
   const key = generateRandomString();
@@ -55,6 +57,11 @@ app.post("/urls", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   let templateVars = {shortURL: req.params.id, longURL: urlDatabase[req.params.id] };
   res.render("urls_show", templateVars);
+});
+
+app.post("/urls/:id", (req, res) => {
+urlDatabase[req.params.id] = req.body.longURL;
+  res.redirect("/urls");
 });
 
 app.get("/u/:shortURL", (req, res) => {
