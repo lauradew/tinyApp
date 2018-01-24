@@ -42,12 +42,18 @@ app.get("/urls/new", (req, res) => {
 app.post("/urls", (req, res) => {
   const key = generateRandomString();
   urlDatabase[key] = req.body.longURL;
-  res.redirect("/urls/");
+  res.redirect("/urls/" + key);
 });
 
 app.get("/urls/:id", (req, res) => {
   let templateVars = {shortURL: req.params.id, longURL: urlDatabase[req.params.id] };
   res.render("urls_show", templateVars);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL];
+  // console.log(req.params);
+  res.redirect(longURL);
 });
 
 
