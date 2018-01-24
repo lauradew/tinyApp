@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TinyApp</title>
+</head>
+<header>
+  <% include ../views/partials/_header %>
+</header>
+<body>
+  <ul>
+    <% for (key in urls) { %>
+      <li><%= urls[key] + ": " + key %></li>
+    <% } %>
+  </ul>
+  <p>
+    <a href=" ">Click here to generate your own tiny URL!</a>
+  </p>
+</body>
+</html>
+<!--  -->
