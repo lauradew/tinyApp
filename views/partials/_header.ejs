@@ -9,6 +9,11 @@
 
         <ul class="nav navbar-nav">
             <li><a href="/urls">Home</a></li>
+            <li>Login: <form action="/login" method="POST">
+              <input id="login" type="text" name="login" placeholder="username">
+              <input type="submit" value="Submit">
+            </form></li>
+            <li>Hello, <%= username %></li>
         </ul>
     </div>
 
