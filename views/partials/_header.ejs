@@ -6,14 +6,15 @@
             <span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>
             TinyApp
         </a>
-
         <ul class="nav navbar-nav">
             <li><a href="/urls">Home</a></li>
-            <li>Login: <form action="/login" method="POST">
+            <li><% if (username) { %>
+              <li>Hello, <%= username %><div align="right"><form id="logout" action="/logout" method="POST"><button type="submit" form="logout">logout</button></form></li>
+            <% } else { %>
+              Login: <form action="/login" method="POST">
               <input id="login" type="text" name="login" placeholder="username">
               <input type="submit" value="Submit">
-            </form></li>
-            <li>Hello, <%= username %></li>
+            </form></li><% } %>
         </ul>
     </div>
 

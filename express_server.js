@@ -82,6 +82,10 @@ app.post("/login", (req, res) => {
   res.cookie('login', req.body.login);
   res.redirect("/urls");
 });
+app.post("/logout", (req, res) => {
+  res.clearCookie('login');
+  res.redirect("/urls");
+})
 
 
 app.listen(PORT, () => {
