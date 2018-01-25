@@ -44,6 +44,11 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+app.get("/register", (req, res) => {
+  let templateVars = { username: req.cookies["login"] };
+  res.render("registration", templateVars);
+});
+
 
 app.post("/urls/:id/delete", (req, res) => {
   let urlLine = req.params.id;
@@ -85,7 +90,13 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie('login');
   res.redirect("/urls");
-})
+});
+app.post("/register", (req, res) => {
+  let templateVars = {email: req.cookies["email"], password: req.cookies["password"]};
+  res.cookie("email", req.body.email);
+  res.cookie("password", req.body.password);
+  res.redirect("/urls");
+});
 
 
 app.listen(PORT, () => {
