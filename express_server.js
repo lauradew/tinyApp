@@ -57,6 +57,11 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+app.get("/register", (req, res) => {
+  let templateVars = { username: req.cookies["login"] };
+  res.render("registration", templateVars);
+});
+
 
 app.post("/urls/:id/delete", (req, res) => {
   let urlLine = req.params.id;
@@ -100,6 +105,7 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 });
 app.post("/register", (req, res) => {
+
   const userID = generateRandomString();
   let newUser = {
     id: userID,
@@ -110,7 +116,6 @@ app.post("/register", (req, res) => {
   res.cookie("user_id", userID);
   res.redirect("/urls");
 });
-
 
 
 app.listen(PORT, () => {
