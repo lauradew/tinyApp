@@ -7,8 +7,12 @@ app.set("view engine", "ejs");
 app.use(cookieParser());
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "userRandomID": {
+    "b2xVn2": "http://www.lighthouselabs.ca"
+  },
+  "user2RandomID": {
+    "9sm5xK": "http://www.google.com"
+  }
 };
 
 const users = {
@@ -23,6 +27,7 @@ const users = {
     password: "dishwasher-funk"
   }
 }
+
 
 function generateRandomString() {
     let text = "";
@@ -55,7 +60,7 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls", (req, res) => {
   let templateVars = {
-    urls: urlDatabase,
+    urls: urlDatabase[req.cookies["user_id"]],
     user: users[req.cookies.user_id],
   };
   res.render("urls_index", templateVars);
@@ -113,7 +118,7 @@ app.post("/urls/:id", (req, res) => {
     users: req.cookies["user_id"],
     user: users[req.cookies.user_id]
   };
-  urlDatabase[req.params.id] = req.body.longURL;
+  urlDatabase[req.cookies["user_id"]][req.params.id] = req.body.longURL;
   res.redirect("/urls");
 });
 
@@ -134,6 +139,7 @@ app.get("/login", (req, res) => {
   };
   res.render("login", templateVars);
 });
+
 
 app.post("/login", (req, res) => {
   let templateVars = {
