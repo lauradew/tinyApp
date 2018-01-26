@@ -30,6 +30,15 @@ const users = {
   }
 }
 
+function urlsForUser(id) {
+  let tempObject = {};
+  Object.keys(urlDatabase).forEach(function(shortURLkey) {
+    if (urlDatabase[shortURLkey]["userID"] === id) {
+      tempObject[shortURLkey] = urlDatabase[shortURLkey];
+    }
+  })
+  return tempObject;
+}
 
 function generateRandomString() {
     let text = "";
@@ -61,8 +70,12 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  // if (req.cookies.user_id !== urlDatabase[req.params.id]["userID"]) {
+  //   res.status(403).send("Error 403: unauthorized user")
+  //   return;
+  // }
   let templateVars = {
-    urls: urlDatabase,
+    urls: urlsForUser(req.cookies.user_id),
     user: users[req.cookies.user_id],
   };
   res.render("urls_index", templateVars);
@@ -137,6 +150,10 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
+  if (!req.cookies.user_id) {
+    res.status(403).send("Error 403: Please login.")
+    return;
+  };
   if (req.cookies.user_id !== urlDatabase[req.params.id]["userID"]) {
     res.status(403).send("Error 403: unauthorized user")
     return;
