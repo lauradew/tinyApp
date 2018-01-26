@@ -171,7 +171,7 @@ app.get("/u/:shortURL", (req, res) => {
     users: req.cookies["user_id"],
     user: users[req.cookies.user_id]
   };
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDatabase[req.params.shortURL]["url"];
   // console.log(req.params);
   res.redirect(longURL);
 });
