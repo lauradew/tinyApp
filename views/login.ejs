@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <title>
+    Login || TinyApp
+  </title>
+  </head>
+  <header>
+        <% include partials/_header %>
+  </header>
+  <body style="font-size:20px; padding:50px;">
+    Login
+    <p><% if (user) { %>
+      <p>Welcome, <%= user.email %>, you're logged in.</p>
+      <% } else { %>
+    <form action="/login" method="POST" style="margin:150px;">
+      <label for="email">email:</label>
+      <input id="email" type="email" name="email" style="width: 300px">
+      <label for="password">password:</label>
+      <input id="password" name="password" type="password" style="width: 300px">
+      <input type="submit" value="Submit">
+    </form><% } %>
+    <p>Don't have an account? <a href="/register"> Register here.</a>
+  </body>
+</html>

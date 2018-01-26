@@ -140,28 +140,19 @@ app.post("/login", (req, res) => {
     // users: req.cookies["user_id"],
     user: users[req.cookies.user_id]
   };
-  let user;
+  let userName;
 Object.keys(users).forEach(function(userKey) {
-  console.log(req.body.email);
-  if (userKey["email"] === req.body.email && userKey[req.body.email]["password"] === req.body.password) {
-    users[req.body.email]["id"] = user;
+  if (users[userKey]["email"] === req.body.email
+    && users[userKey]["password"] === req.body.password) {
+    userName = users[userKey]["id"];
+}});
+  if (!userName) {
+    res.status(403).send("Invalid email or password")
   } else {
-    res.status(401).send("Invalid email or password");
-    return;
-};
-  // console.log(users[userKey]);
-  console.log(userKey[req.body.email]["password"]);
-  res.cookie('user_id', user);
-  // let user = users[req.cookies.user_id]
-  // console.log(req);
-  // res.cookie('user_id', user);
-  // console.log("COOKIES", req.cookies);
-  //res.render(templateVars);
-  // if (req.body.email !== user.email || req.body.password !== user.password) {
-  //   res.status(403).send("Invalid email or password");
-  // } else {
+  res.cookie('user_id', userName);
   res.redirect("/urls");
-})});
+  }
+});
 
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
