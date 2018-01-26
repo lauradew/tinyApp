@@ -7,11 +7,13 @@ app.set("view engine", "ejs");
 app.use(cookieParser());
 
 const urlDatabase = {
-  "userRandomID": {
-    "b2xVn2": "http://www.lighthouselabs.ca"
+  "b2xVn2": {
+    url: "http://www.lighthouselabs.ca",
+    userID: "userRandomID"
   },
-  "user2RandomID": {
-    "9sm5xK": "http://www.google.com"
+  "9sm5xK": {
+    url: "http://www.google.com",
+    userID: "user2RandomID"
   }
 };
 
@@ -60,7 +62,7 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls", (req, res) => {
   let templateVars = {
-    urls: urlDatabase[req.cookies["user_id"]],
+    urls: urlDatabase,
     user: users[req.cookies.user_id],
   };
   res.render("urls_index", templateVars);
@@ -71,6 +73,10 @@ app.get("/urls/new", (req, res) => {
     users: req.cookies["user_id"],
     user: users[req.cookies.user_id]
   };
+  if (!req.cookies["user_id"]) {
+    res.redirect("/login");
+    return;
+  }
   res.render("urls_new", templateVars);
 });
 
@@ -83,6 +89,10 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
+  if (req.cookies.user_id !== urlDatabase[req.params.id]["userID"]) {
+    res.status(403).send("Error 403: unauthorized user")
+    return;
+  };
   let urlLine = req.params.id;
   let templateVars = {
     users: req.cookies["user_id"],
@@ -94,32 +104,49 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
+//route for editing
+app.post("/urls/:id", (req, res) => {
+  if (req.cookies.user_id !== urlDatabase[req.params.id]["userID"]) {
+    res.status(403).send("Error 403: unauthorized user")
+    return;
+  };
+  let templateVars = {
+    users: req.cookies["user_id"],
+    user: users[req.cookies.user_id]
+  };
+  urlDatabase[req.params.id] = {
+    url: req.body.longURL,
+    userID: req.cookies["user_id"]
+  };
+  console.log(urlDatabase);
+  res.redirect("/urls");
+});
+
 app.post("/urls", (req, res) => {
   const key = generateRandomString();
   let templateVars = {
     users: req.cookies["user_id"],
     user: users[req.cookies.user_id]
   };
-  urlDatabase[key] = req.body.longURL;
+  // urlDatabase[key] = req.body.longURL;
+    urlDatabase[key] = {
+    url: req.body.longURL,
+    userID: req.cookies["user_id"]
+  };
   res.redirect("/urls/" + key);
 });
 
 app.get("/urls/:id", (req, res) => {
+  if (req.cookies.user_id !== urlDatabase[req.params.id]["userID"]) {
+    res.status(403).send("Error 403: unauthorized user")
+    return;
+  };
   let templateVars = {
     shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id],
+    longURL: urlDatabase[req.params.id]["url"],
     user: users[req.cookies.user_id]
   };
   res.render("urls_show", templateVars);
-});
-
-app.post("/urls/:id", (req, res) => {
-  let templateVars = {
-    users: req.cookies["user_id"],
-    user: users[req.cookies.user_id]
-  };
-  urlDatabase[req.cookies["user_id"]][req.params.id] = req.body.longURL;
-  res.redirect("/urls");
 });
 
 app.get("/u/:shortURL", (req, res) => {
