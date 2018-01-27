@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 8080; // default port 8080
 app.set("view engine", "ejs");
 app.use(cookieSession({
   name: "session",
-  keys: [process.env.SECRET_KEY || "development"]
+  keys: [process.env.user_id || "userName"]
 }));
 // app.use(cookieParser());
 
@@ -78,16 +78,16 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  // if (req.cookies.user_id !== urlDatabase[req.params.id]["userID"]) {
-  //   res.status(403).send("Error 403: unauthorized user")
-  //   return;
-  // }
   let templateVars = {
     urls: urlsForUser(req.session.user_id),
     // urls: urlsForUser(req.cookies.user_id),
     user: users[req.session.user_id]
     // user: users[req.cookies.user_id],
   };
+  // if (req.session.user_id !== urlDatabase[req.params.id]["userID"]) {
+  //   res.status(403).send("Error 403: unauthorized user")
+  //   return;
+  // }
   res.render("urls_index", templateVars);
 });
 
@@ -218,27 +218,27 @@ app.get("/login", (req, res) => {
 
 
 app.post("/login", (req, res) => {
-  let templateVars = {
+  // let templateVars = {
     // users: req.cookies["user_id"],
-    user: users[req.session.user_id]
+    // user: users[req.session.user_id]
     // user: users[req.cookies.user_id]
-  };
+  // };
   let userName;
-  const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-Object.keys(users).forEach(function(userKey) {
-  if (users[userKey]["email"] === req.body.email
-    && bcrypt.compareSync(req.body.password, hashedPassword) === true) {
+  // const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+  Object.keys(users).forEach(function(userKey) {
+    if (users[userKey]["email"] === req.body.email
+    && bcrypt.compareSync(req.body.password, users[userKey]["password"]) === true) {
     //below was code before hashing
     // && users[userKey]["password"] === req.body.password) {
-    userName = users[userKey]["id"];
-}});
-  if (!userName) {
-    res.status(403).send("Invalid email or password")
-  } else {
-  req.session.user_id = userName;
-  // res.cookie('user_id', userName);
-  res.redirect("/urls");
-  }
+      userName = users[userKey]["id"];
+  }});
+    if (!userName) {
+      res.status(403).send("Invalid email or password")
+    } else {
+      req.session.user_id = userName;
+    // res.cookie('user_id', userName);
+    res.redirect("/urls");
+    }
 });
 
 app.post("/logout", (req, res) => {
@@ -257,9 +257,9 @@ app.post("/register", (req, res) => {
     res.status(400).send("Invalid email or password");
     return;
   } else {
-  const userID = generateRandomString();
-  const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-  let newUser = {
+    const userID = generateRandomString();
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+    let newUser = {
     id: userID,
     email: req.body.email,
     password: hashedPassword
@@ -271,7 +271,8 @@ app.post("/register", (req, res) => {
   console.log(req.session.user_id);
   // res.cookie("user_id", newUser.id);
   res.redirect("/urls");
-}});
+  }
+});
 
 
 app.listen(PORT, () => {
