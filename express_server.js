@@ -20,7 +20,7 @@ const urlDatabase = {
     url: "http://www.google.com",
     userID: "user2RandomID"
   }
-};
+}
 
 const users = {
   "userRandomID": {
