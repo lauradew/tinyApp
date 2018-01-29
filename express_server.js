@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
-const PORT = process.env.PORT || 8080; // default port 8080
+const PORT = process.env.PORT || 8080;
 
 
 app.set("view engine", "ejs");
@@ -20,7 +20,7 @@ const urlDatabase = {
     url: "http://www.google.com",
     userID: "user2RandomID"
   }
-}
+};
 
 const users = {
   "userRandomID": {
@@ -33,7 +33,7 @@ const users = {
     email: "user2@example.com",
     password: bcrypt.hashSync("dishwasher-funk", 10)
   }
-}
+};
 
 function urlsForUser(id) {
   let tempObject = {};
@@ -41,17 +41,17 @@ function urlsForUser(id) {
     if (urlDatabase[shortURLkey]["userID"] === id) {
       tempObject[shortURLkey] = urlDatabase[shortURLkey];
     }
-  })
+  });
   return tempObject;
 }
 
 function generateRandomString() {
-    let text = "";
-    const possible = "abcdefghijklmnopqrstuvwxyz0123456789";
-    for(let i = 0; i < 6; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
+  let text = "";
+  const possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+  for(let i = 0; i < 6; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
 }
 
 //allow to access POST request parameters
@@ -60,7 +60,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", (req, res) => {
   let templateVars = {
-    users: req.session.user_id,
+    users: req.session.user_id
   };
   res.end("Hello!");
 });
@@ -107,9 +107,9 @@ app.get("/register", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
   if (req.sesion.user_id !== urlDatabase[req.params.id]["userID"]) {
-    res.status(403).send("Error 403: unauthorized user")
+    res.status(403).send("Error 403: unauthorized user");
     return;
-  };
+  }
   let urlLine = req.params.id;
   let templateVars = {
     users: req.session.user_id,
@@ -124,9 +124,9 @@ app.post("/urls/:id/delete", (req, res) => {
 //route for editing
 app.post("/urls/:id", (req, res) => {
   if (req.session.user_id !== urlDatabase[req.params.id]["userID"]) {
-    res.status(403).send("Error 403: unauthorized user")
+    res.status(403).send("Error 403: unauthorized user");
     return;
-  };
+  }
   let templateVars = {
     users: req.session.user_id,
     user: users[req.session.user_id]
@@ -146,7 +146,7 @@ app.post("/urls", (req, res) => {
     user: users[req.session.user_id]
   };
   // urlDatabase[key] = req.body.longURL;
-    urlDatabase[key] = {
+  urlDatabase[key] = {
     url: req.body.longURL,
     userID: req.session.user_id
   };
@@ -155,13 +155,13 @@ app.post("/urls", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   if (!req.session.user_id) {
-    res.status(403).send("Error 403: Please login.")
+    res.status(403).send("Error 403: Please login.");
     return;
-  };
-   if (req.session.user_id !== urlDatabase[req.params.id]["userID"]) {
-    res.status(403).send("Error 403: unauthorized user")
+  }
+  if (req.session.user_id !== urlDatabase[req.params.id]["userID"]) {
+    res.status(403).send("Error 403: unauthorized user");
     return;
-  };
+  }
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id]["url"],
@@ -197,13 +197,14 @@ app.post("/login", (req, res) => {
     //below was code before hashing
     // && users[userKey]["password"] === req.body.password) {
       userName = users[userKey]["id"];
-  }});
-    if (!userName) {
-      res.status(403).send("Invalid email or password")
-    } else {
-      req.session.user_id = userName;
-      res.redirect("/urls");
     }
+  });
+  if (!userName) {
+    res.status(403).send("Invalid email or password");
+  } else {
+    req.session.user_id = userName;
+    res.redirect("/urls");
+  }
 });
 
 app.post("/logout", (req, res) => {
@@ -224,16 +225,16 @@ app.post("/register", (req, res) => {
     const userID = generateRandomString();
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
     let newUser = {
-    id: userID,
-    email: req.body.email,
-    password: hashedPassword
-  };
-  users[userID] = newUser;
-  console.log(newUser);
-  // console.log(newUser);
-  req.session.user_id = newUser.id;
-  console.log(req.session.user_id);
-  res.redirect("/urls");
+      id: userID,
+      email: req.body.email,
+      password: hashedPassword
+    };
+    users[userID] = newUser;
+    console.log(newUser);
+    // console.log(newUser);
+    req.session.user_id = newUser.id;
+    console.log(req.session.user_id);
+    res.redirect("/urls");
   }
 });
 
