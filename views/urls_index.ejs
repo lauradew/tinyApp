@@ -8,6 +8,7 @@
   <% include ../views/partials/_header %>
 </header>
 <body>
+  <div class="url-container" style="padding: 24px;">
   <ul>
     <% for (var key in urls) { %>
       <li><%= urls[key]["url"] + ": " + key %>
@@ -21,6 +22,7 @@
   <p>
     <a href="/urls/new">Click here to generate your own tiny URL!</a>
   </p>
+</div>
 </body>
 </html>
 <!--  -->

@@ -8,13 +8,16 @@
   <% include ../views/partials/_header %>
 </header>
 <body>
+  <div class="url-container" style="padding: 24px;">
   <p>
       <%= shortURL + ": " + longURL %>
       <form action="/urls/<%= shortURL %>" method="POST" style="margin:150px;">
       <label for="longURL">Edit URL:</label>
       <input id="<=% longURL %>" type="text" name="longURL" placeholder="http://" style="width: 300px">
       <input type="submit" value="Update">
+    </form>
   </p>
+  </div>
 </body>
 </html>
 <!--  -->
