@@ -78,10 +78,6 @@ app.get("/urls", (req, res) => {
     urls: urlsForUser(req.session.user_id),
     user: users[req.session.user_id]
   };
-  // if (req.session.user_id !== urlDatabase[req.params.id]["userID"]) {
-  //   res.status(403).send("Error 403: unauthorized user")
-  //   return;
-  // }
   res.render("urls_index", templateVars);
 });
 
@@ -106,7 +102,7 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  if (req.sesion.user_id !== urlDatabase[req.params.id]["userID"]) {
+  if (req.session.user_id !== urlDatabase[req.params.id]["userID"]) {
     res.status(403).send("Error 403: unauthorized user");
     return;
   }
@@ -115,8 +111,6 @@ app.post("/urls/:id/delete", (req, res) => {
     users: req.session.user_id,
     user: users[req.session.user_id]
   };
-  //conosle.log to check id
-  // console.log(req.params);
   delete urlDatabase[urlLine];
   res.redirect("/urls");
 });
@@ -176,7 +170,6 @@ app.get("/u/:shortURL", (req, res) => {
     user: users[req.session.user_id]
   };
   let longURL = urlDatabase[req.params.shortURL]["url"];
-  // console.log(req.params);
   res.redirect(longURL);
 });
 
@@ -195,7 +188,7 @@ app.post("/login", (req, res) => {
     if (users[userKey]["email"] === req.body.email
     && bcrypt.compareSync(req.body.password, users[userKey]["password"]) === true) {
     //below was code before hashing
-    // && users[userKey]["password"] === req.body.password) {
+
       userName = users[userKey]["id"];
     }
   });
@@ -217,7 +210,6 @@ app.get("/400", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  // console.log(req.body)
   if (!req.body.email || !req.body.password) {
     res.status(400).send("Invalid email or password");
     return;
@@ -230,10 +222,7 @@ app.post("/register", (req, res) => {
       password: hashedPassword
     };
     users[userID] = newUser;
-    console.log(newUser);
-    // console.log(newUser);
     req.session.user_id = newUser.id;
-    console.log(req.session.user_id);
     res.redirect("/urls");
   }
 });
